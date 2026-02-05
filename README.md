@@ -1,51 +1,53 @@
-# Table OCR Boxplot Tool
 
-This repository provides a CLI tool for extracting `xxth` and `期間` columns from a table image using OCR and table-structure detection, then plotting a boxplot.
+# Excel Boxplot ツール
 
-## Overview
+このリポジトリには、Excel ファイルから `xxth` と `期間` 列を抽出し、箱ひげ図を作成する CLI ツールが含まれています。
 
-The workflow uses:
+## 概要
 
-- **OpenCV** to detect table grid lines and segment cell regions.
-- **Tesseract OCR (`pytesseract`)** to recognize text in each cell.
-- **Fuzzy header matching** to locate the `xxth` and `期間` columns, even with minor OCR mistakes.
-- **Matplotlib** to render a boxplot with green box fills.
+処理の流れは以下のとおりです。
 
-## Usage
+- **Pandas** で Excel シートを読み込みます。
+- **ヘッダーの近似一致**で `xxth` と `期間` の列を特定します（軽微な誤認識を許容）。
+- **Matplotlib** で箱ひげ図を描画し、箱の色を緑に設定します。
+
+## 使い方
 
 ```bash
 python tools/plot_xxth_boxplot.py \
-  path/to/input_table.png \
+  path/to/input_table.xlsx \
   output/xxth_period_boxplot.png
 ```
 
-Optional arguments:
+オプション引数:
 
 ```bash
 python tools/plot_xxth_boxplot.py \
-  path/to/input_table.png \
+  path/to/input_table.xlsx \
   output/xxth_period_boxplot.png \
-  --min-similarity 0.7 \
-  --tesseract-lang jpn+eng
+  --sheet Sheet1 \
+  --min-similarity 0.7
 ```
 
-## Expected Input & Output
+## 入力と出力の期待仕様
 
-### Sample input image (example)
+### サンプル入力（例）
 
-A PNG/JPG containing a table with headers similar to:
+以下のようなヘッダーを持つシートを想定しています。
 
 | xxth | 期間 | ... |
 | ---- | ---- | --- |
 | 7th_CR | 12 | ... |
 | 8th_CR | 9 | ... |
 
-### Expected output
 
-The tool creates a boxplot where:
+### 期待される出力
 
-- **X-axis**: `xxth` (sorted by the leading number, e.g., 7th, 8th, 9th, ...).
-- **Y-axis**: `期間` numeric values (non-numeric or missing values are ignored).
-- **Box fill color**: green.
+作成される箱ひげ図の内容は以下の通りです。
 
-The output image is saved to the path you specify (e.g. `output/xxth_period_boxplot.png`).
+- **X軸**: `xxth`（先頭の数字で並び替え、7th, 8th, 9th... の順）
+- **Y軸**: `期間` の数値（数値以外や欠損は除外）
+- **箱の色**: 緑
+
+出力画像は指定したパス（例: `output/xxth_period_boxplot.png`）に保存されます。
+
