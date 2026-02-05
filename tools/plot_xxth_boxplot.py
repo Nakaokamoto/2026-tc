@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
+
 """Extract xxth/期間 columns from an Excel file and plot a boxplot."""
+
 from __future__ import annotations
 
 import argparse
 import difflib
 import os
 import re
+
 from typing import Iterable, List, Sequence, Tuple
 
 import matplotlib.pyplot as plt
@@ -13,27 +16,34 @@ import numpy as np
 import pandas as pd
 
 
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
+
             "Extract xxth/期間 columns from an Excel file and plot a boxplot."
         )
     )
     parser.add_argument("input", help="Path to input Excel file (.xlsx/.xls).")
+
     parser.add_argument(
         "output", help="Path to output image file (e.g. output/xxth_period_boxplot.png)."
     )
     parser.add_argument(
+
         "--sheet",
         default=None,
         help="Excel sheet name or index (default: first sheet).",
     )
     parser.add_argument(
+
         "--min-similarity",
         type=float,
         default=0.6,
         help="Minimum similarity for fuzzy header match.",
     )
+
+
     return parser.parse_args()
 
 
@@ -45,12 +55,15 @@ def similarity(a: str, b: str) -> float:
     return difflib.SequenceMatcher(None, a, b).ratio()
 
 
+
 def select_column(headers: Sequence[str], target: str, min_similarity: float) -> str:
+
     normalized_headers = [normalize_header(h) for h in headers]
     normalized_target = normalize_header(target)
     scores = [similarity(h, normalized_target) for h in normalized_headers]
     best_idx = int(np.argmax(scores)) if scores else -1
     if best_idx == -1 or scores[best_idx] < min_similarity:
+
         best_match = headers[best_idx] if best_idx >= 0 else ""
         raise ValueError(f"Header '{target}' not found. Best match '{best_match}'")
     return headers[best_idx]
@@ -67,6 +80,7 @@ def parse_period(value: object) -> float | None:
     if isinstance(value, (int, float)):
         return float(value)
     cleaned = re.sub(r"[^0-9.\-]", "", str(value))
+
     try:
         return float(cleaned)
     except ValueError:
@@ -81,6 +95,7 @@ def sort_rows_by_xxth(rows: Iterable[Tuple[str, float]]) -> List[Tuple[str, floa
     return sorted(rows, key=sort_key)
 
 
+
 def load_excel(path: str, sheet: str | None) -> pd.DataFrame:
     sheet_name = None
     if sheet is not None:
@@ -89,6 +104,7 @@ def load_excel(path: str, sheet: str | None) -> pd.DataFrame:
         except ValueError:
             sheet_name = sheet
     return pd.read_excel(path, sheet_name=sheet_name)
+
 
 
 def create_boxplot(xxth_values: Sequence[str], period_values: Sequence[float], output: str) -> None:
@@ -114,14 +130,17 @@ def create_boxplot(xxth_values: Sequence[str], period_values: Sequence[float], o
 
 def main() -> None:
     args = parse_args()
+
     df = load_excel(args.input, args.sheet)
 
     headers = [str(col) for col in df.columns]
     xxth_col = select_column(headers, "xxth", args.min_similarity)
     period_col = select_column(headers, "期間", args.min_similarity)
 
+
     xxth_values: List[str] = []
     period_values: List[float] = []
+
 
     for _, row in df.iterrows():
         xxth = row.get(xxth_col)
@@ -129,6 +148,7 @@ def main() -> None:
         if xxth is None or period is None:
             continue
         xxth_values.append(str(xxth))
+
         period_values.append(period)
 
     if not xxth_values:
