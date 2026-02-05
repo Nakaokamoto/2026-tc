@@ -39,6 +39,7 @@ python tools/plot_xxth_boxplot.py \
 | 7th_CR | 12 | ... |
 | 8th_CR | 9 | ... |
 
+
 ### 期待される出力
 
 作成される箱ひげ図の内容は以下の通りです。
@@ -48,3 +49,4 @@ python tools/plot_xxth_boxplot.py \
 - **箱の色**: 緑
 
 出力画像は指定したパス（例: `output/xxth_period_boxplot.png`）に保存されます。
+

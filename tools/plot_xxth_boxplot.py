@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+
 """Extract xxth/期間 columns from an Excel file and plot a boxplot."""
+
 from __future__ import annotations
 
 import argparse
@@ -11,6 +13,7 @@ from typing import Iterable, List, Sequence, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
 
 
 def parse_args() -> argparse.Namespace:
@@ -43,6 +46,7 @@ def normalize_header(text: str) -> str:
 
 def similarity(a: str, b: str) -> float:
     return difflib.SequenceMatcher(None, a, b).ratio()
+
 
 
 def select_column(headers: Sequence[str], target: str, min_similarity: float) -> str:
@@ -81,6 +85,7 @@ def sort_rows_by_xxth(rows: Iterable[Tuple[str, float]]) -> List[Tuple[str, floa
     return sorted(rows, key=sort_key)
 
 
+
 def load_excel(path: str, sheet: str | None) -> pd.DataFrame:
     sheet_name: str | int = 0
     if sheet is not None:
@@ -88,6 +93,7 @@ def load_excel(path: str, sheet: str | None) -> pd.DataFrame:
             sheet_name = int(sheet)
         except ValueError:
             sheet_name = sheet
+
     data = pd.read_excel(path, sheet_name=sheet_name)
     if isinstance(data, dict):
         if not data:
@@ -125,6 +131,7 @@ def main() -> None:
     xxth_col = select_column(headers, "xxth", args.min_similarity)
     period_col = select_column(headers, "期間", args.min_similarity)
 
+
     xxth_values: List[str] = []
     period_values: List[float] = []
 
@@ -134,6 +141,7 @@ def main() -> None:
         if xxth is None or period is None:
             continue
         xxth_values.append(str(xxth))
+
         period_values.append(period)
 
     if not xxth_values:
