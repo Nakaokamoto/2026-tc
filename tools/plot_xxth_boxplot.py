@@ -62,7 +62,7 @@ def extract_numeric_prefix(value: str) -> int | None:
 
 
 def parse_period(value: object) -> float | None:
-    if value is None:
+    if value is None or pd.isna(value):
         return None
     if isinstance(value, (int, float)):
         return float(value)
